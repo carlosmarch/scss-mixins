@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------
-  Scss CSS3 Mixins! 
+  Scss Useful Mixins Library! 
   By: Carlos March, http://www.carlosmarch.es, @carlosmarch__
   List of Scss Mixins File to be @imported and @included
 ------------------------------------------------------------- */
@@ -7,7 +7,7 @@
 /// Adds a browser prefix to the property
 /// @param {*} $property Property
 /// @param {*} $value Value
-/// Usage css3-prefix(transition, all 0.2s ease-in)
+/// Usage @include css3-prefix(transition, all 0.2s ease-in);
 
 @mixin css3-prefix($property, $value) {
   -webkit-#{$property}: #{$value};
@@ -19,9 +19,11 @@
 }
 
 
+
 /// Adds a transition cross-browser
-/// @param {Property} $property [all time ease]
-/// Usage transition(all 0.2s ease-in)
+/// @param {Property} $property [all 0.2s ease-in] - Property Time Ease
+/// @require {mixin} css3-prefix
+/// Usage @include transition(all 0.2s ease-in)
 
 @mixin transition($property) {
   @include css3-prefix('transition', $property );
@@ -30,43 +32,62 @@
 
 
 /// Set a rem font size with pixel fallback
-/// @param {Property} $property [14px]
-/// Usage @include font-size(14px)
+/// @param {Size} $size [14px] - Size
+/// Usage @include font-size(14px);
 
 @function calculateRem($size) {
   $remSize: $size / 16px;
   @return $remSize * 1rem;
 }
-
 @mixin font-size($size) {
   font-size: $size;
   font-size: calculateRem($size);
 }
 
-/// Rounded corners
-/// @param {Property} $property [14px]
-/// Usage rounded-corners($corners: 0 0 0 0)
 
-@mixin rounded-corners ($corners: 0 0 0 0) {
+
+/// Rounded corners
+/// @param {Radius} $radius [4px 4px 4px 4px] - Top-Left Top-Right Bottom-Right Bottom-Left
+/// @require {mixin} css3-prefix
+/// Usage @include rounded-corners($corners: 4px 4px 4px 4px);
+
+@mixin rounded-corners ($radius: 0 0 0 0) {
   $top-left: nth($corners, 1);
   $top-right: nth($corners, 2);
   $bottom-right: nth($corners, 3);
   $bottom-left: nth($corners, 4);
+  
+  @include css3-prefix('border-top-left-radius',$top-left );
+  @include css3-prefix('border-top-right-radius',$top-right );
+  @include css3-prefix('border-bottom-right-radius',$bottom-right );
+  @include css3-prefix('border-bottom-left-radius',$bottom-left );
+}
 
-  border-top-left-radius: $top-left;
-  border-top-right-radius: $top-right;
-  border-bottom-right-radius: $bottom-right;
-  border-bottom-left-radius: $bottom-left;
 
+/// Buttons
+/// @param {Color} $color [#333] - Color
+/// Usage @include button(#333);
+
+@mixin button($color) {
+	background-color: $color;
+	border: 1px solid mix(black, $color, 25%);
+	border-radius: 5px;
+	padding: .25em .5em;
+	
+	&:hover {
+		cursor: pointer;
+		background-color: mix(black, $color, 15%);
+		border-color: mix(black, $color, 40%);
+	}
 }
 
 
 
 /// Generates a css class from every element in nested list
-/// @param {Property Value} 
+/// @param {Property Value} [blue #00CAFF] - Name Color
 
 $colors : blue #00CAFF, deepblue #445D95;
-            
+
 @each $color in $colors {
   $name : nth($color, 1);
   $hex : nth($color, 2);
@@ -74,7 +95,10 @@ $colors : blue #00CAFF, deepblue #445D95;
   .cl-#{$name}-dark{ color: darken($hex, 20%);}
   .bg-#{$name}{background: $hex;}
   .bg-#{$name}-dark{background: darken($hex, 20%);}
+  .button-#{$name} {@include button($hex);}
 }
+
+
 
 /// Breakpoints
 /// Usage @include breakpoint(small) { width: 95%; }
@@ -94,6 +118,7 @@ $colors : blue #00CAFF, deepblue #445D95;
 
 /// Clearfix
 /// Usage @include clearfix();
+
 @mixin clearfix() {
     &:before,
     &:after {
@@ -104,3 +129,7 @@ $colors : blue #00CAFF, deepblue #445D95;
         clear: both;
     }
 }
+
+
+
+
