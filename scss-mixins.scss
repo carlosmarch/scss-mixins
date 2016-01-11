@@ -1,0 +1,61 @@
+/* -------------------------------------------------------------
+  Scss CSS3 Mixins! 
+  By: Carlos March, http://www.carlosmarch.es, @carlosmarch__
+  List of Scss Mixins File to be @imported and @included
+------------------------------------------------------------- */
+
+/// Adds a browser prefix to the property
+/// @param {*} $property Property
+/// @param {*} $value Value
+
+@mixin css3-prefix($property, $value) {
+  -webkit-#{$property}: #{$value};
+   -khtml-#{$property}: #{$value};
+     -moz-#{$property}: #{$value};
+      -ms-#{$property}: #{$value};
+       -o-#{$property}: #{$value};
+          #{$property}: #{$value};
+}
+
+
+/// Adds a transition cross-browser
+/// @param {Property} $property [all] - Css property
+/// @param {Time} $time [0.2s] - Time
+/// @param {Ease} $ease [ease-in] - Ease
+
+@mixin transition($property: all, $time: 0.2s, $ease: ease-in) {
+  @include css3-prefix('transition', $property $time $ease);
+}
+
+
+/// Text Shadow
+/// @param {Size} $x [2px] - X
+/// @param {Size} $y [2px] - Y
+/// @param {Size} $blur [2px] - Blur
+/// @param {Color} $color [rgba(0,0,0,.4)] - Color
+
+@mixin text-shadow($x: 2px, $y: 2px, $blur: 5px, $color: rgba(0,0,0,.4)) {
+    text-shadow: $x $y $blur $color;
+}
+
+/* -------------------------------------------------------------
+  UTILS
+  Set of timesavers
+------------------------------------------------------------- */
+
+/// Generates a class from every element in array for color & background
+
+$colors :   blue        #00CAFF,
+            deepblue    #445D95;
+            
+@each $color in $colors {
+  $name : nth($color, 1);
+  $hex : nth($color, 2);
+  .cl-#{$name}{ color: $hex;}
+  .cl-#{$name}-dark{ color: darken($hex, 20%);}
+  .bg-#{$name}{background: $hex;}
+  .bg-#{$name}-dark{background: darken($hex, 20%);}
+}
+
+
+
