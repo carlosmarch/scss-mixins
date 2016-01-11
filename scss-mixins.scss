@@ -70,14 +70,14 @@
 
 @mixin button($color) {
 	background-color: $color;
-	border: 1px solid mix(black, $color, 25%);
-	border-radius: 5px;
+	border: 1px solid mix(black, $color, 2%);
+	border-radius: 15px;
 	padding: .25em .5em;
 	
 	&:hover {
 		cursor: pointer;
-		background-color: mix(black, $color, 15%);
-		border-color: mix(black, $color, 40%);
+		background-color: mix(black, $color, 10%);
+		border-color: mix(black, $color, 14%);
 	}
 }
 
@@ -101,7 +101,9 @@ $colors : blue #00CAFF, deepblue #445D95;
 
 
 /// Breakpoints
+/// @param {Point} [large] - large / medium / small
 /// Usage @include breakpoint(small) { width: 95%; }
+
 @mixin breakpoint($point) {
   @if $point == large {
     @media (min-width: 64.375em) { @content; }
@@ -132,4 +134,102 @@ $colors : blue #00CAFF, deepblue #445D95;
 
 
 
+/// Text Truncate
+/// Usage @extend %text-truncate;
 
+%text-truncate {
+ text-overflow: ellipsis;
+ vertical-align: top;
+ white-space: nowrap;
+ overflow: hidden;
+ display: inline-block;
+}
+
+
+
+/// Long Shadow XD
+/// @param {color} [rgba(0, 0, 0, 0.4)] - Color
+/// @param {largeness} [160] - Largeness
+/// Usage @include longshadow(#333, 160);
+
+@function makelongshadow($color, $largeness) {
+  $val: 0px 0px $color;
+  @for $i from 1 through $largeness {
+    $val: #{$val}, #{$i}px #{$i}px #{$color};
+  }
+  @return $val;
+}
+
+@mixin longshadow($color, $largeness) {
+  text-shadow: makelongshadow($color, $largeness);
+}
+
+
+
+/// Center Absolute
+/// @param {Position} [position] - Vertical / Horizontal / Both
+/// Usage @include abs-center(both);
+
+@mixin abs-center($position) {
+  position: absolute;
+
+  @if $position == 'vertical' {
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+  @else if $position == 'horizontal' {
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    transform: translate(-50%);
+  }
+
+  @else if $position == 'both' {
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+
+}
+
+
+
+
+/// Block Element
+/// @access public
+/// @param {String} $element - Element's name
+@mixin element($element) {
+    &__#{$element} {
+        @content;
+    }
+}
+
+/// Block Modifier
+/// @access public
+/// @param {String} $modifier - Modifier's name
+@mixin modifier($modifier) {
+    &--#{$modifier} {
+        @content;
+    }
+}
+
+/// UsageDEMO @include element('element');
+.block {
+    /* CSS declarations for `.block` */
+    @include element('element') {
+        /* CSS declarations for `.block__element` */
+    }
+
+    @include modifier('modifier') {
+        /* CSS declarations for `.block--modifier` */
+
+        @include element('element') {
+            /* CSS declarations for `.block--modifier__element` */
+        }
+    }
+}
