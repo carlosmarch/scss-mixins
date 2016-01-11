@@ -7,6 +7,7 @@
 /// Adds a browser prefix to the property
 /// @param {*} $property Property
 /// @param {*} $value Value
+/// Usage css3-prefix(transition, all 0.2s ease-in)
 
 @mixin css3-prefix($property, $value) {
   -webkit-#{$property}: #{$value};
@@ -19,34 +20,52 @@
 
 
 /// Adds a transition cross-browser
-/// @param {Property} $property [all] - Css property
-/// @param {Time} $time [0.2s] - Time
-/// @param {Ease} $ease [ease-in] - Ease
+/// @param {Property} $property [all time ease]
+/// Usage transition(all 0.2s ease-in)
 
-@mixin transition($property: all, $time: 0.2s, $ease: ease-in) {
-  @include css3-prefix('transition', $property $time $ease);
+@mixin transition($property) {
+  @include css3-prefix('transition', $property );
 }
 
 
-/// Text Shadow
-/// @param {Size} $x [2px] - X
-/// @param {Size} $y [2px] - Y
-/// @param {Size} $blur [2px] - Blur
-/// @param {Color} $color [rgba(0,0,0,.4)] - Color
 
-@mixin text-shadow($x: 2px, $y: 2px, $blur: 5px, $color: rgba(0,0,0,.4)) {
-    text-shadow: $x $y $blur $color;
+/// Set a rem font size with pixel fallback
+/// @param {Property} $property [14px]
+/// Usage @include font-size(14px)
+
+@function calculateRem($size) {
+  $remSize: $size / 16px;
+  @return $remSize * 1rem;
 }
 
-/* -------------------------------------------------------------
-  UTILS
-  Set of timesavers
-------------------------------------------------------------- */
+@mixin font-size($size) {
+  font-size: $size;
+  font-size: calculateRem($size);
+}
 
-/// Generates a class from every element in array for color & background
+/// Rounded corners
+/// @param {Property} $property [14px]
+/// Usage rounded-corners($corners: 0 0 0 0)
 
-$colors :   blue        #00CAFF,
-            deepblue    #445D95;
+@mixin rounded-corners ($corners: 0 0 0 0) {
+  $top-left: nth($corners, 1);
+  $top-right: nth($corners, 2);
+  $bottom-right: nth($corners, 3);
+  $bottom-left: nth($corners, 4);
+
+  border-top-left-radius: $top-left;
+  border-top-right-radius: $top-right;
+  border-bottom-right-radius: $bottom-right;
+  border-bottom-left-radius: $bottom-left;
+
+}
+
+
+
+/// Generates a css class from every element in nested list
+/// @param {Property Value} 
+
+$colors : blue #00CAFF, deepblue #445D95;
             
 @each $color in $colors {
   $name : nth($color, 1);
@@ -57,5 +76,31 @@ $colors :   blue        #00CAFF,
   .bg-#{$name}-dark{background: darken($hex, 20%);}
 }
 
+/// Breakpoints
+/// Usage @include breakpoint(small) { width: 95%; }
+@mixin breakpoint($point) {
+  @if $point == large {
+    @media (min-width: 64.375em) { @content; }
+  }
+  @else if $point == medium {
+    @media (min-width: 50em) { @content; }
+  }
+  @else if $point == small {
+    @media (min-width: 37.5em)  { @content; }
+  }
+}
 
 
+
+/// Clearfix
+/// Usage @include clearfix();
+@mixin clearfix() {
+    &:before,
+    &:after {
+        content: "";
+        display: table;
+    }
+    &:after {
+        clear: both;
+    }
+}
