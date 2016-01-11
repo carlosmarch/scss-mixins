@@ -233,3 +233,21 @@ $colors : blue #00CAFF, deepblue #445D95;
         }
     }
 }
+
+
+
+/// Box Shadow
+/// @param {HorizOffset} [0px] - Horizontal Offset
+/// @param {VertOffset} [0px] - Vertical Offset
+/// @param {Blur} [0px] - Blur
+/// @param {Color} [#333] - Color
+/// @require {mixin} css3-prefix
+/// Usage @include box-shadow(0px 0px 0px #333)
+
+@mixin box-shadow($horizOffset, $vertOffset, $blur, $color) {
+    @include css3-prefix('box-shadow', $horizOffset $vertOffset $blur $color );
+    border-collapse: separate;
+}
+
+
+
