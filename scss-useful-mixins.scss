@@ -31,31 +31,16 @@
 
 
 
-/// Set a rem font size with pixel fallback
-/// @param {Size} $size [14px] - Size
-/// Usage @include font-size(14px);
-
-@function calculateRem($size) {
-  $remSize: $size / 16px;
-  @return $remSize * 1rem;
-}
-@mixin font-size($size) {
-  font-size: $size;
-  font-size: calculateRem($size);
-}
-
-
-
 /// Rounded corners
 /// @param {Radius} $radius [4px 4px 4px 4px] - Top-Left Top-Right Bottom-Right Bottom-Left
 /// @require {mixin} css3-prefix
 /// Usage @include rounded-corners($corners: 4px 4px 4px 4px);
 
 @mixin rounded-corners($radius: 0 0 0 0) {
-  $top-left: nth($corners, 1);
-  $top-right: nth($corners, 2);
-  $bottom-right: nth($corners, 3);
-  $bottom-left: nth($corners, 4);
+  $top-left: nth($radius, 1);
+  $top-right: nth($radius, 2);
+  $bottom-right: nth($radius, 3);
+  $bottom-left: nth($radius, 4);
   
   @include css3-prefix('border-top-left-radius',$top-left );
   @include css3-prefix('border-top-right-radius',$top-right );
@@ -65,22 +50,22 @@
 
 
 /// Buttons
-/// @param {Color} $color [#333] - Color
-/// @param {Radius} $radius [15px] - Radius
+/// @param {Color} $bg [#333] - Color
+/// @param {Args} $radius [15px 15px 15px 15px] - Radius
 /// @require {mixin} rounded-corners
-/// Usage @include button(#333, 15px);
+/// Usage @include button(#333, 15px 15px 15px 15px);
 
-@mixin button($color, $radius) {
-	background-color: $color;
-	border: 1px solid mix(black, $color, 2%);
+@mixin button($bg: #333333, $radius: 0px 0px 0px 0px) {
+	background-color: $bg;
+	border: 1px solid mix(black, $bg, 2%);
 	padding: .25em .5em;
 	text-align: center;
-	@include rounded-corners($corners: $radius $radius $radius $radius);
+	@include rounded-corners($radius);
 	
 	&:hover {
 		cursor: pointer;
-		background-color: mix(black, $color, 10%);
-		border-color: mix(black, $color, 14%);
+		background-color: mix(black, $bg, 10%);
+		border-color: mix(black, $bg, 14%);
 	}
 }
 
@@ -99,6 +84,21 @@ $colors : blue #00CAFF, deepblue #445D95;
   .bg-#{$name}{background: $hex;}
   .bg-#{$name}-dark{background: darken($hex, 20%);}
   .button-#{$name} {@include button($hex);}
+}
+
+
+
+/// Set a rem font size with pixel fallback
+/// @param {Size} $size [14px] - Size
+/// Usage @include font-size(14px);
+
+@function calculateRem($size) {
+  $remSize: $size / 16px;
+  @return $remSize * 1rem;
+}
+@mixin font-size($size) {
+  font-size: $size;
+  font-size: calculateRem($size);
 }
 
 
@@ -138,9 +138,9 @@ $colors : blue #00CAFF, deepblue #445D95;
 
 
 /// Text Truncate
-/// Usage @extend %text-truncate;
+/// Usage @include text-truncate;
 
-%text-truncate {
+@mixin text-truncate {
  text-overflow: ellipsis;
  vertical-align: top;
  white-space: nowrap;
@@ -206,6 +206,7 @@ $colors : blue #00CAFF, deepblue #445D95;
 /// Block Element
 /// @access public
 /// @param {String} $element - Element's name
+
 @mixin element($element) {
     &__#{$element} {
         @content;
@@ -222,6 +223,7 @@ $colors : blue #00CAFF, deepblue #445D95;
 }
 
 /// UsageDEMO @include element('element');
+
 .block {
     /* CSS declarations for `.block` */
     @include element('element') {
