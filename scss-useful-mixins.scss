@@ -349,7 +349,7 @@ $colors : blue #00CAFF, deepblue #445D95;
 
 
 
-/// Input Styling
+/// Webkit Placeholder Styling
 /// @usage @include placeholder-style{ color: lighten(#384047, 70%); };
 @mixin placeholder-style {
   &::-webkit-input-placeholder {
@@ -369,19 +369,42 @@ $colors : blue #00CAFF, deepblue #445D95;
   }
 }
 
+/// Webkit Autofill Styling
+/// @param {color} [#fff] - Bg Color
+/// @param {color} [#fff] - Text Color
+/// @usage @include autofill-style( #fff, #333 ){ font-size: 12px; };
+
+@mixin autofill-style($bg: #fff, $text: #333){
+	&::-webkit-autofill {
+	    -webkit-box-shadow: 0 0 0px 1000px $bg inset;
+	    -webkit-text-fill-color: $text;
+	    @content
+	}	
+}
+
+
+
 /// Reset Input & Styling
+/// @require {mixin} placeholder-style
 $input-types: "textarea, input, input[type='text'], input[type='password'], input[type='date'], input[type='datetime-local'], input[type='month'], input[type='time'], input[type='week'], input[type='email'], input[type='number'], input[type='search'], input[type='tel'], input[type='url']";
 #{$input-types}{
     margin: 0;
     outline: 0;
     border: 0;
     -webkit-appearance: none;
-    border-radius: 5px;
     box-shadow: 0;
     box-sizing: border-box;
-    &:focus {}
-    @include placeholder-style {
-      color: lighten(#384047, 70%);
+    background-color: lighten(#384047, 70%);
+    border: 1px solid lighten(#384047, 60%);
+    
+    &:focus {
+      background-color: #fff;
+      border: 1px solid lighten(#384047, 60%);
     }
+    @include placeholder-style {
+      
+    }
+    @include autofill-style( #fff, #333 ){
+      
+    };
 }
-
