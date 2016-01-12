@@ -370,8 +370,8 @@ $colors : blue #00CAFF, deepblue #445D95;
 }
 
 /// Webkit Autofill Styling
-/// @param {color} [#fff] - Bg Color
-/// @param {color} [#fff] - Text Color
+/// @param {Color} [#fff] - Bg Color
+/// @param {Color} [#fff] - Text Color
 /// @usage @include autofill-style( #fff, #333 ){ font-size: 12px; };
 
 @mixin autofill-style($bg: #fff, $text: #333){
@@ -385,7 +385,7 @@ $colors : blue #00CAFF, deepblue #445D95;
 
 
 /// Reset Input & Styling
-/// @require {mixin} placeholder-style
+/// @require {mixin} placeholder-style;
 $input-types: "textarea, input, input[type='text'], input[type='password'], input[type='date'], input[type='datetime-local'], input[type='month'], input[type='time'], input[type='week'], input[type='email'], input[type='number'], input[type='search'], input[type='tel'], input[type='url']";
 #{$input-types}{
     margin: 0;
@@ -406,5 +406,5 @@ $input-types: "textarea, input, input[type='text'], input[type='password'], inpu
     }
     @include autofill-style( #fff, #333 ){
       
-    };
+    }
 }
