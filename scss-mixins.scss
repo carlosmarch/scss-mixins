@@ -253,6 +253,7 @@ $colors : blue #00CAFF, deepblue #445D95;
 }
 
 
+
 /// Opacity
 /// @param {Opactity} [0] - Opacity (0-1)
 /// Usage @include opacity(0.8);
@@ -262,12 +263,20 @@ $colors : blue #00CAFF, deepblue #445D95;
   filter: alpha(opacity=$opacity-ie); //IE8
 }
 
+
+
 /// Gradients. Thanks Chris Eppstein!
 /// Convert angle
 /// @author Chris Eppstein
 /// @param {Number} $value - Value to convert
 /// @param {String} $unit - Unit to convert to
 /// @return {Number} Converted angle
+
+/// @Usage
+/// @include linear-gradient(#31B7D7, #EDAC7D);
+/// @include linear-gradient(to right, #E47D7D 0%, #C195D3 50%, #4FB4E8 100%);
+/// @include linear-gradient(42deg, #B58234 0%, #D2B545 50%, #D7C04D 50.01%, #FFFFFF 100%);
+
 @function convert-angle($value, $unit) {
   $convertable-units: deg grad turn rad;
   $conversion-factors: 1 (10grad/9deg) (1turn/360deg) (3.1415926rad/180deg);
@@ -338,17 +347,41 @@ $colors : blue #00CAFF, deepblue #445D95;
   background: linear-gradient($direction, $color-stops);
 }
 
-/// @Tests
-/// @Usage
-.test-1 {
-  @include linear-gradient(#31B7D7, #EDAC7D);
+
+
+/// Input Styling
+/// @usage @include placeholder-style{ color: lighten(#384047, 70%); };
+@mixin placeholder-style {
+  &::-webkit-input-placeholder {
+    @content;
+  }
+  &:-moz-placeholder {
+    @content;
+  }
+  &::-moz-placeholder {
+    @content;
+  }
+  &:-ms-input-placeholder {
+    @content;
+  }
+  .placeholder {
+    @content;
+  }
 }
 
-.test-2 {
-  @include linear-gradient(to right, #E47D7D 0%, #C195D3 50%, #4FB4E8 100%);
-}
-
-.test-3 {
-  @include linear-gradient(42deg, #B58234 0%, #D2B545 50%, #D7C04D 50.01%, #FFFFFF 100%);
+/// Reset Input & Styling
+$input-types: "textarea, input, input[type='text'], input[type='password'], input[type='date'], input[type='datetime-local'], input[type='month'], input[type='time'], input[type='week'], input[type='email'], input[type='number'], input[type='search'], input[type='tel'], input[type='url']";
+#{$input-types}{
+    margin: 0;
+    outline: 0;
+    border: 0;
+    -webkit-appearance: none;
+    border-radius: 5px;
+    box-shadow: 0;
+    box-sizing: border-box;
+    &:focus {}
+    @include placeholder-style {
+      color: lighten(#384047, 70%);
+    }
 }
 
