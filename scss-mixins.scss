@@ -21,7 +21,7 @@
 
 
 /// Adds a transition cross-browser
-/// @param {Property} $property [all 0.2s ease-in] - Property Time Ease
+/// @param {Args} $property [all 0.2s ease-in] - Property Time Ease
 /// @require {mixin} css3-prefix
 /// Usage @include transition(all 0.2s ease-in)
 
@@ -51,7 +51,7 @@
 /// @require {mixin} css3-prefix
 /// Usage @include rounded-corners($corners: 4px 4px 4px 4px);
 
-@mixin rounded-corners ($radius: 0 0 0 0) {
+@mixin rounded-corners($radius: 0 0 0 0) {
   $top-left: nth($corners, 1);
   $top-right: nth($corners, 2);
   $bottom-right: nth($corners, 3);
@@ -66,13 +66,16 @@
 
 /// Buttons
 /// @param {Color} $color [#333] - Color
-/// Usage @include button(#333);
+/// @param {Radius} $radius [15px] - Radius
+/// @require {mixin} rounded-corners
+/// Usage @include button(#333, 15px);
 
-@mixin button($color) {
+@mixin button($color, $radius) {
 	background-color: $color;
 	border: 1px solid mix(black, $color, 2%);
-	border-radius: 15px;
 	padding: .25em .5em;
+	text-align: center;
+	@include rounded-corners($corners: $radius $radius $radius $radius);
 	
 	&:hover {
 		cursor: pointer;
@@ -170,9 +173,9 @@ $colors : blue #00CAFF, deepblue #445D95;
 /// @param {Position} [position] - Vertical / Horizontal / Both
 /// Usage @include abs-center(both);
 
-@mixin abs-center($position) {
+@mixin abs-center($position: both) {
   position: absolute;
-
+ 
   @if $position == 'vertical' {
     top: 50%;
     -webkit-transform: translateY(-50%);
@@ -250,4 +253,102 @@ $colors : blue #00CAFF, deepblue #445D95;
 }
 
 
+/// Opacity
+/// @param {Opactity} [0] - Opacity (0-1)
+/// Usage @include opacity(0.8);
+@mixin opacity($opacity) {
+  opacity: $opacity;
+  $opacity-ie: $opacity * 100;
+  filter: alpha(opacity=$opacity-ie); //IE8
+}
+
+/// Gradients. Thanks Chris Eppstein!
+/// Convert angle
+/// @author Chris Eppstein
+/// @param {Number} $value - Value to convert
+/// @param {String} $unit - Unit to convert to
+/// @return {Number} Converted angle
+@function convert-angle($value, $unit) {
+  $convertable-units: deg grad turn rad;
+  $conversion-factors: 1 (10grad/9deg) (1turn/360deg) (3.1415926rad/180deg);
+  @if index($convertable-units, unit($value)) and index($convertable-units, $unit) {
+    @return $value
+             / nth($conversion-factors, index($convertable-units, unit($value)))
+             * nth($conversion-factors, index($convertable-units, $unit));
+  }
+  
+  @warn "Cannot convert `#{unit($value)}` to `#{$unit}`.";
+}
+
+/// Test if `$value` is an angle
+/// @param {*} $value - Value to test
+/// @return {Bool}
+@function is-direction($value) {
+  $is-direction: index((to top, to top right, to right top, to right, to bottom right, to right bottom, to bottom, to bottom left, to left bottom, to left, to left top, to top left), $value);
+  $is-angle: type-of($value) == 'number' and index('deg' 'grad' 'turn' 'rad', unit($value));
+  
+  @return $is-direction or $is-angle;
+}
+
+/// Convert a direction to legacy syntax
+/// @param {Keyword | Angle} $value - Value to convert
+/// @require {function} is-direction
+/// @require {function} convert-angle
+@function legacy-direction($value) {
+  @if is-direction($value) == false {
+    @warn "Cannot convert `#{$value}` to legacy syntax because it doesn't seem to be an angle or a direction";
+  }
+  
+  $conversion-map: ( 
+    to top          : bottom,
+    to top right    : bottom left,
+    to right top    : left bottom,
+    to right        : left,
+    to bottom right : top left,
+    to right bottom : left top,
+    to bottom       : top,
+    to bottom left  : top right,
+    to left bottom  : right top,
+    to left         : right,
+    to left top     : right bottom,
+    to top left     : bottom right
+  );
+    
+  @if map-has-key($conversion-map, $value) {
+    @return map-get($conversion-map, $value);
+  }
+  
+  @return 90deg - convert-angle($value, 'deg');
+}
+
+/// Mixin printing a linear-gradient 
+/// as well as a plain color fallback 
+/// and the `-webkit-` prefixed declaration
+/// @access public
+/// @param {String | List | Angle} $direction - Linear gradient direction
+/// @param {Arglist} $color-stops - List of color-stops composing the gradient
+@mixin linear-gradient($direction, $color-stops...) {
+  @if is-direction($direction) == false {
+    $color-stops: ($direction, $color-stops);
+    $direction: 180deg;
+  }
+  
+  background: nth(nth($color-stops, 1), 1);
+  background: -webkit-linear-gradient(legacy-direction($direction), $color-stops);
+  background: linear-gradient($direction, $color-stops);
+}
+
+/// @Tests
+/// @Usage
+.test-1 {
+  @include linear-gradient(#31B7D7, #EDAC7D);
+}
+
+.test-2 {
+  @include linear-gradient(to right, #E47D7D 0%, #C195D3 50%, #4FB4E8 100%);
+}
+
+.test-3 {
+  @include linear-gradient(42deg, #B58234 0%, #D2B545 50%, #D7C04D 50.01%, #FFFFFF 100%);
+}
 
