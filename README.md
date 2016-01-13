@@ -1,2 +1,2 @@
 # scss-mixins
-Scss compilation
+Scss mixins compilation
